@@ -16,7 +16,7 @@ exports.findAll = async (req, res) => {
 };
 exports.createUser = async (req, res) => {
   try {
-    const { id, name, email, password, role, status } = req.body;
+    const { name, email, password, role, status } = req.body;
     const user = await userModel.create({
       name: name,
       email: email,
@@ -58,6 +58,7 @@ exports.findOne = async (req, res) => {
       user,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 'fail',
       message: 'Internal Server Error..!',
@@ -71,7 +72,7 @@ exports.updateUser = async (req, res) => {
     const user = await userModel.findOne({
       where: {
         id: id,
-        status: true,
+        status: 'Available',
       },
     });
     if (!user) {
@@ -86,6 +87,7 @@ exports.updateUser = async (req, res) => {
       message: `User name and email has been updated`,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 'fail',
       message: 'Internal Server Error..!',
@@ -112,6 +114,7 @@ exports.deleteUser = async (req, res) => {
       message: 'The user has been successfully removed!',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 'fail',
       message: 'Something went very wrong!',

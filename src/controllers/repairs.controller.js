@@ -112,6 +112,7 @@ exports.deleteRepairs = async (req, res) => {
       message: `The repair ${id} has been successfully removed!`,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 'fail',
       message: 'Something went very wrong!',
