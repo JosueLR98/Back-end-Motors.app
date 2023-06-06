@@ -1,18 +1,25 @@
 const repairsModel = require('./../models/repairs.model');
 exports.findAllRepairs = async (req, res) => {
-  const time = req.requestTime;
-  const repairs = await repairsModel.findAll({
-    where: {
-      status: 'pending',
-    },
-  });
-  return res.json({
-    requestTime: time,
-    results: repairs.length,
-    status: 'success',
-    message: 'All of  motorcycles to be repaired ..!',
-    repairs,
-  });
+  try {
+    const repairs = await repairsModel.findAll({
+      where: {
+        status: 'pending',
+      },
+    });
+    return res.json({
+      requestTime: time,
+      results: repairs.length,
+      status: 'success',
+      message: 'All of  motorcycles to be repaired ..!',
+      repairs,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went very wrong!',
+    });
+  }
 };
 exports.createRepairs = async (req, res) => {
   try {
@@ -47,7 +54,7 @@ exports.findOneRepairs = async (req, res) => {
     if (!repair) {
       return res.status(404).json({
         status: 'error',
-        message: `The product with id: ${id} not found!`,
+        message: `The Repair product with id: ${id} not found!`,
       });
     }
     return res.status(200).json({
@@ -107,6 +114,7 @@ exports.deleteRepairs = async (req, res) => {
         message: `Product with id: ${id} not found!`,
       });
     }
+    await repair.update({ status: 'cancelled' });
     return res.status(200).json({
       status: 'successs',
       message: `The repair ${id} has been successfully removed!`,

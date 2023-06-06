@@ -113,6 +113,7 @@ exports.deleteUser = async (req, res) => {
       status: 'successs',
       message: 'The user has been successfully removed!',
     });
+    await user.update({ status: 'Complete' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
