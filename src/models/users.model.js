@@ -30,7 +30,7 @@ const User = db.define('users', {
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'Available',
+    defaultValue: 'available',
   },
 });
 module.exports = User;
