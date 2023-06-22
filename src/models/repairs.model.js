@@ -9,7 +9,7 @@ const Repair = db.define('repairs', {
     type: DataTypes.INTEGER,
   },
   date: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   status: {
@@ -19,6 +19,18 @@ const Repair = db.define('repairs', {
   },
   userId: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  motorsNumber: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
 });

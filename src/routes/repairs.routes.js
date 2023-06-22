@@ -1,5 +1,9 @@
 const express = require('express');
 const repairsController = require('./../controllers/repairs.controller');
+
+const repairMiddleware = require('../middlewares/repairs.middleware');
+const validatiosMiddleware = require('../middlewares/validations.middleware');
+
 const router = express.Router();
 {
   /*const validProduct = (req, res, next) => {
@@ -27,12 +31,15 @@ const router = express.Router();
 router
   .route('/')
   .get(repairsController.findAllRepairs)
-  .post(repairsController.createRepairs);
+  .post(
+    validatiosMiddleware.createRepairsValidation,
+    repairsController.createRepairs
+  );
 
 router
   .route('/:id')
-  .get(repairsController.findOneRepairs)
+  .get(repairMiddleware.validRepairs, repairsController.findOneRepairs)
   .patch(repairsController.updateRepairs)
-  .delete(repairsController.deleteRepairs);
+  .delete(repairMiddleware.validRepairs, repairsController.deleteRepairs);
 
 module.exports = router;

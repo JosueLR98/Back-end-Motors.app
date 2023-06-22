@@ -7,7 +7,6 @@ exports.findAllRepairs = async (req, res) => {
       },
     });
     return res.json({
-      requestTime: time,
       results: repairs.length,
       status: 'success',
       message: 'All of  motorcycles to be repaired ..!',
@@ -23,11 +22,14 @@ exports.findAllRepairs = async (req, res) => {
 };
 exports.createRepairs = async (req, res) => {
   try {
-    const { date, status, userId } = req.body;
+    const { date, status, userId, description, motorsNumber, Date } = req.body;
     const repair = await repairsModel.create({
-      date: date,
-      status: status,
-      userId: userId,
+      date,
+      status,
+      userId,
+      description,
+      motorsNumber,
+      Date,
     });
     return res.status(201).json({
       Ok: true,
@@ -44,22 +46,11 @@ exports.createRepairs = async (req, res) => {
 };
 exports.findOneRepairs = async (req, res) => {
   try {
-    const { id } = req.params;
-    const repair = await repairsModel.findOne({
-      where: {
-        id: id,
-        status: 'pending',
-      },
-    });
-    if (!repair) {
-      return res.status(404).json({
-        status: 'error',
-        message: `The Repair product with id: ${id} not found!`,
-      });
-    }
+    const { repair } = req;
+
     return res.status(200).json({
       status: 'success',
-      message: 'Product found a motorcycle pending repair',
+      message: 'Product found a motorcycle pending repair..! ✔✨',
       repair,
     });
   } catch (error) {
@@ -101,23 +92,14 @@ exports.updateRepairs = async (req, res) => {
 };
 exports.deleteRepairs = async (req, res) => {
   try {
-    const { id } = req.params;
-    const repair = await repairsModel.findOne({
-      where: {
-        id: id,
-        status: 'pending',
-      },
-    });
-    if (!repair) {
-      res.status(200).json({
-        status: 'error',
-        message: `Product with id: ${id} not found!`,
-      });
-    }
+    const { repair } = req;
+
     await repair.update({ status: 'cancelled' });
+
     return res.status(200).json({
       status: 'successs',
       message: `The repair ${id} has been successfully removed!`,
+      repair,
     });
   } catch (error) {
     console.log(error);
