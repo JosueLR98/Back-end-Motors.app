@@ -1,4 +1,6 @@
+const catchAsync = require('../utils/catchAsync');
 const repairsModel = require('./../models/repairs.model');
+
 exports.findAllRepairs = async (req, res) => {
   try {
     const repairs = await repairsModel.findAll({
@@ -61,51 +63,37 @@ exports.findOneRepairs = async (req, res) => {
     });
   }
 };
-exports.updateRepairs = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-    const repair = await repairsModel.findOne({
-      where: {
-        id,
-        status: 'pending',
-      },
-    });
-    if (!repair) {
-      return res.status(404).json({
-        status: 'error',
-        message: `User with id: ${id} not found`,
-      });
-    }
-    await repair.update({ status });
-    return res.status(201).json({
-      status: 'seccess',
-      message: 'Repairs status has been updated',
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Internal Server Error..!',
+exports.updateRepairs = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const repair = await repairsModel.findOne({
+    where: {
+      id,
+      status: 'pending',
+    },
+  });
+  if (!repair) {
+    return res.status(404).json({
+      status: 'error',
+      message: `User with id: ${id} not found`,
     });
   }
-};
-exports.deleteRepairs = async (req, res) => {
-  try {
-    const { repair } = req;
+  await repair.update({ status });
+  return res.status(201).json({
+    status: 'seccess',
+    message: 'Repairs status has been updated',
+  });
+});
 
-    await repair.update({ status: 'cancelled' });
+exports.deleteRepairs = catchAsync(async (req, res) => {
+  const { repair } = req;
 
-    return res.status(200).json({
-      status: 'successs',
-      message: `The repair ${id} has been successfully removed!`,
-      repair,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went very wrong!',
-    });
-  }
-};
+  await repair.update({ status: 'cancelled' });
+
+  return res.status(200).json({
+    status: 'successs',
+    message: `The repair has been successfully removed!`,
+    repair,
+  });
+});

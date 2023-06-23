@@ -13,6 +13,6 @@ exports.validRepairs = catchAsync(async (req, res, next) => {
   if (!repair) {
     return next(new AppError(`User with id: ${id} not found..⚡!!`, 404));
   }
-  req.user = repair;
+  req.repair = repair;
   next();
 });
