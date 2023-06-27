@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator');
+
 const validFields = (req, res, next) => {
   const errors = validationResult(req);
 
@@ -8,35 +9,25 @@ const validFields = (req, res, next) => {
       errors: errors.mapped(),
     });
   }
+
   next();
 };
+
 exports.createUserValidation = [
   body('name').notEmpty().withMessage('Name cannot be empty'),
   body('email')
     .notEmpty()
     .withMessage('Email cannot be empty')
     .isEmail()
-    .withMessage('Must be a valid'),
+    .withMessage('Must be a valid email'),
   body('password')
     .notEmpty()
     .withMessage('Password cannot be empty')
     .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long'),
+    .withMessage('Password must be at least 8 characters'),
   validFields,
 ];
-exports.createRepairsValidation = [
-  body('date').notEmpty().withMessage('date cannot be empty'),
-  body('description')
-    .notEmpty()
-    .isString()
-    .withMessage('description cannot be empty'),
-  body('motorsNumber')
-    .notEmpty()
-    .withMessage('Motors Number cannot be empty')
-    .isFloat()
-    .withMessage('this is not a number'),
-  validFields,
-];
+
 exports.loginUserValidation = [
   body('email')
     .notEmpty()
@@ -48,5 +39,20 @@ exports.loginUserValidation = [
     .withMessage('Password cannot be empty')
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters'),
+  validFields,
+];
+
+exports.createRepairValidation = [
+  body('date')
+    .notEmpty()
+    .withMessage('Date cannot be empty')
+    .isDate()
+    .withMessage('This field must be a date'),
+  body('motorsNumber')
+    .notEmpty()
+    .withMessage('Motors Number cannot be empty')
+    .isLength({ min: 6 })
+    .withMessage('Motors Number must be at least 6 characters'),
+  body('description').notEmpty().withMessage('Description cannot be empty'),
   validFields,
 ];

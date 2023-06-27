@@ -30,7 +30,7 @@ const Repair = db.define('repairs', {
     allowNull: false,
   },
   description: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
 });

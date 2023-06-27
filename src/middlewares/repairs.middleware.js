@@ -1,18 +1,43 @@
-const Repairs = require('../models/repairs.model');
+const Repair = require('../models/repairs.model');
+const Users = require('../models/users.model');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('./../utils/appError');
 
-exports.validRepairs = catchAsync(async (req, res, next) => {
+exports.validRepair = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const repair = await Repairs.findOne({
+
+  const repair = await Repair.findOne({
     where: {
       id,
       status: 'pending',
     },
+    include: [
+      {
+        model: Users,
+        attributes: ['id', 'name', 'email', 'role'],
+      },
+    ],
   });
+
   if (!repair) {
-    return next(new AppError(`User with id: ${id} not found..⚡!!`, 404));
+    const completedRepair = await Repair.findOne({
+      where: {
+        id,
+        status: 'completed',
+      },
+    });
+
+    if (completedRepair) {
+      return res.status(404).json({
+        status: 'error',
+        message: `The repair with id:${id} cannot be canceled because it has already been completed!`,
+      });
+    }
+
+    return next(new AppError(`Repair with id:${id} was not found 😔`, 404));
   }
+
+  req.user = repair.user;
   req.repair = repair;
   next();
 });

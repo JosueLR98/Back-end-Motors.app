@@ -1,54 +1,30 @@
-const express = require('express');
-const repairsController = require('./../controllers/repairs.controller');
+const repairsController = require('../controllers/repairs.controller');
 
-const repairMiddleware = require('../middlewares/repairs.middleware');
+// middlewares
 const validationMiddleware = require('../middlewares/validations.middleware');
-const protectMiddleware = require('../middlewares/protect.middleware');
+const protecMiddleware = require('../middlewares/protect.middleware');
+const repairMiddleware = require('../middlewares/repairs.middleware');
 
-const router = express.Router();
-{
-  /*const validProduct = (req, res, next) => {
-  const { name } = req.body.name;
-  const { email } = req.body.email;
-  const { password } = req.body.password;
-  if (!name) {
-    res.status(400).json({
-      message: " The name is requirred",
-    });
-  }
-  if (!email) {
-    res.status(400).json({
-      message: " The email is requirred",
-    });
-  }
-  if (!password) {
-    res.status(400).json({
-      message: " The password is requirred",
-    });
-  }
-  next();
-};*/
-}
+const { Router } = require('express');
+const router = Router();
+
+router.use(protecMiddleware.protect);
+
+// routes
 router
   .route('/')
-  .get(
-    protectMiddleware.protect,
-    protectMiddleware.restrictTo('employee'),
-    repairsController.findAllRepairs
-  )
+  .get(protecMiddleware.restrictTo('employee'), repairsController.findRepairs)
   .post(
-    validationMiddleware.createRepairsValidation,
-    protectMiddleware.protect,
-    repairsController.createRepairs
+    validationMiddleware.createRepairValidation,
+    repairsController.createRepair
   );
 
 router
-  .use(protectMiddleware.protect)
-  .use(protectMiddleware.restrictTo('employee'))
-  .use('/:id', repairMiddleware.validRepairs)
+  .use(protecMiddleware.restrictTo('employee'))
+  .use('/:id', repairMiddleware.validRepair)
   .route('/:id')
-  .get(repairsController.findOneRepairs)
-  .patch(repairsController.updateRepairs)
-  .delete(repairsController.deleteRepairs);
+  .get(repairsController.findRepair)
+  .patch(repairsController.updateRepair)
+  .delete(repairsController.deleteRepair);
 
 module.exports = router;

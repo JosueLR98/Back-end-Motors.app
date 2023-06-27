@@ -1,33 +1,38 @@
-const express = require('express');
-//controllers
-const usersController = require('./../controllers/users.controller.js');
-//Middleeares
-const userMiddleware = require('../middlewares/validations.middleware.js');
-const validMiddleware = require('../middlewares/users.middleware.js');
-const protectMiddleware = require('../middlewares/protect.middleware.js');
-const router = express.Router();
+const usersController = require('../controllers/users.controller');
+
+// middlewares
+const usersMiddleware = require('../middlewares/users.middleware');
+const validationMiddleware = require('../middlewares/validations.middleware');
+const protecMiddleware = require('../middlewares/protect.middleware');
+
+const { Router } = require('express');
+const router = Router();
 
 router
   .route('/')
-  .get(protectMiddleware.protect, usersController.findAll)
-  .post(userMiddleware.createUserValidation, usersController.createUser);
+  .get(protecMiddleware.protect, usersController.findAllUsers)
+  .post(validationMiddleware.createUserValidation, usersController.createUser);
 
 router.post(
   '/login',
-  userMiddleware.loginUserValidation,
+  validationMiddleware.loginUserValidation,
   usersController.login
 );
+
+router.use(protecMiddleware.protect);
+
 router
   .route('/:id')
-  .get(validMiddleware.validUser, usersController.findOne)
+  .get(usersMiddleware.validUser, usersController.findOneUser)
   .patch(
-    validMiddleware.validUser,
-    protectMiddleware.protectAccountOwner,
+    usersMiddleware.validUser,
+    protecMiddleware.protectAccountOwner,
     usersController.updateUser
   )
   .delete(
-    validMiddleware.validUser,
-    protectMiddleware.protectAccountOwner,
+    usersMiddleware.validUser,
+    protecMiddleware.protectAccountOwner,
     usersController.deleteUser
   );
+
 module.exports = router;

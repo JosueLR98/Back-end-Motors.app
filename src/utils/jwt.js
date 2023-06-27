@@ -12,9 +12,9 @@ const generateJWT = (id) => {
       },
       (err, token) => {
         if (err) {
-          console.log(err);
           reject(err);
         }
+
         resolve(token);
       }
     );
